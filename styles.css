@@ -18,6 +18,13 @@ body {
     font-weight: 600;
 }
 
+#app, #app * {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+
 #app {
     text-align: center;
     padding: 20px;
