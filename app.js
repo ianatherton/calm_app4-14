@@ -55,8 +55,12 @@ class WordDisplay {
         this.displayInterval = null;
         this.visibleWords = [];
 
+        // Add debug display
+        this.debugDisplay = document.getElementById('debug-display');
+
         this.initializeText();
         this.setupEventListeners();
+        this.setDebugDisplay();
     }
 
     initializeText() {
@@ -102,6 +106,13 @@ class WordDisplay {
             this.currentTextKey = this.currentTextKey === 'calm-breathing' ? 'kindness' : 'calm-breathing';
             this.initializeText();
         });
+    }
+
+    setDebugDisplay() {
+        if (this.debugDisplay) {
+            const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            this.debugDisplay.textContent = isMobile ? 'Mobile mode' : 'Desktop mode';
+        }
     }
 
     showNextWord() {
