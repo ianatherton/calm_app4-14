@@ -1,47 +1,47 @@
 const texts = {
-    'calm-breathing': 'breathing in, I enjoy my in-breath breathing out, I enjoy my out-breath',
-    'kindness': `this is what should be done 
-by one who is skilled in goodness, 
-having glimpsed the state of perfect calm: 
-let them be honest and upright, 
-straightforward and gentle in speech, 
-humble and not conceited, 
-contented and easily satisfied 
-unburdened with duties and frugal in their ways 
-peaceful and calm and wise and skillful, 
-not proud or demanding in nature 
-let them not do the slightest thing 
-that the wise would later reprove 
-wishing: in gladness and in safety, 
-may all beings be happy 
-whatever living beings there may be; 
-whether they are weak or strong, excluding none, 
-the great or the mighty, medium short or small 
-those seen or unseen, 
-those near or far away, 
-those born or yet to be born
-may all beings be at ease! 
-let none deceive another, 
-or despise any being in any state 
-let none through anger or ill-will 
-wish harm upon another 
-even as a mother protects with her life
-her child, her only child
-so with a boundless heart
-should one cherish all living beings;
-cultivate a limitless heart of goodwill
-for all throughout the cosmos
-in all its height, depth and breadth-
-a love that is untroubled 
-and beyond hatred and ill-will
-whether standing or walking, sitting or lying, 
-as long as we are awake, 
-maintain this mindfulness of love 
-this is the noblest way of living.
-free from wrong views, greed, and sensual desires, 
-living in beauty and realizing perfect understanding, 
-those who practice boundless love 
-will certainly transcend birth and death`
+    'calm-breathing': 'breathing in, I enjoy my in-breath ~ ~ breathing out, I enjoy my out-breath ~',
+    'kindness': `This is what should be done ~
+by one who is skilled in goodness, ~
+having glimpsed the state of perfect calm: ~
+let them be honest and upright, ~
+straightforward and gentle in speech, ~
+humble and not conceited, ~
+contented and easily satisfied ~
+unburdened with duties and frugal in their ways ~
+peaceful and calm and wise and skillful, ~
+not proud or demanding in nature ~
+let them not do the slightest thing ~
+that the wise would later reprove ~
+wishing: in gladness and in safety, ~
+may all beings be happy ~
+whatever living beings there may be; ~
+whether they are weak or strong, excluding none, ~
+the great or the mighty, medium short or small ~
+those seen or unseen, ~
+those near or far away, ~
+those born or yet to be born ~
+may all beings be at ease! ~
+let none deceive another, ~
+or despise any being in any state ~
+let none through anger or ill-will ~
+wish harm upon another ~
+even as a mother protects with her life ~
+her child, her only child ~
+so with a boundless heart ~
+should one cherish all living beings; ~
+cultivate a limitless heart of goodwill ~
+for all throughout the cosmos ~
+in all its height, depth and breadth- ~
+a love that is untroubled ~
+and beyond hatred and ill-will ~
+whether standing or walking, sitting or lying, ~
+as long as we are awake, ~
+maintain this mindfulness of love ~
+this is the noblest way of living. ~
+free from wrong views, greed, and sensual desires, ~
+living in beauty and realizing perfect understanding, ~
+those who practice boundless love ~
+will certainly transcend birth and death.~`
 };
 
 class WordDisplay {
@@ -94,8 +94,13 @@ class WordDisplay {
             this.initializeText();
         }
 
+        // Remove underline from previous newest word
+        if (this.visibleWords.length > 0) {
+            this.visibleWords[this.visibleWords.length - 1].classList.remove('newest');
+        }
+
         const wordElement = document.createElement('div');
-        wordElement.className = 'word';
+        wordElement.className = 'word newest';
         wordElement.textContent = this.words[this.currentIndex];
         this.wordsList.appendChild(wordElement);
         
@@ -127,7 +132,7 @@ class WordDisplay {
                 return;
             }
             this.showNextWord();
-        }, 1000);
+        }, 1150);
     }
 }
 

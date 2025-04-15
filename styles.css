@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'Lexend';
+    src: url('./static/Lexend-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -5,8 +12,10 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: skyblue;
-    font-family: Arial, sans-serif;
+    /* Gradient from light blue (top) to deeper blue (bottom) */
+    background: linear-gradient(to bottom, #87cefa 0%, #2563eb 100%);
+    font-family: 'Lexend', Arial, sans-serif;
+    font-weight: 600;
 }
 
 #app {
@@ -70,6 +79,13 @@ body {
 .word.fade-out {
     opacity: 0;
     transform: translateY(20px);
+}
+
+.word.newest {
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    text-decoration-thickness: 3px;
+    text-decoration-color: #2563eb;
 }
 
 #controls {
