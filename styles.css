@@ -1,0 +1,91 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: skyblue;
+    font-family: Arial, sans-serif;
+}
+
+#app {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 800px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#word-container {
+    flex-grow: 1;
+    position: relative;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    scroll-behavior: smooth;
+}
+
+#word-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#word-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+#word-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+#word-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#words-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    min-height: 100%;
+}
+
+.word {
+    font-size: 48px;
+    color: #333;
+    margin: 10px 0;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.word.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.word.fade-out {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+#controls {
+    margin-top: auto;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: white;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #f0f0f0;
+}
