@@ -67,18 +67,36 @@ class WordDisplay {
     }
 
     setupEventListeners() {
-        document.addEventListener('mousedown', () => {
-            this.isMouseDown = true;
-            if (this.currentIndex === -1) {
-                this.showNextWord();
-            }
-            this.startDisplayingWords();
-        });
+        // Utility to detect mobile browser
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        document.addEventListener('mouseup', () => {
-            this.isMouseDown = false;
-            clearInterval(this.displayInterval);
-        });
+        if (isMobile) {
+            // Mobile: Use touch events
+            document.addEventListener('touchstart', (e) => {
+                this.isMouseDown = true;
+                if (this.currentIndex === -1) {
+                    this.showNextWord();
+                }
+                this.startDisplayingWords();
+            });
+            document.addEventListener('touchend', (e) => {
+                this.isMouseDown = false;
+                clearInterval(this.displayInterval);
+            });
+        } else {
+            // Desktop: Use mouse events
+            document.addEventListener('mousedown', () => {
+                this.isMouseDown = true;
+                if (this.currentIndex === -1) {
+                    this.showNextWord();
+                }
+                this.startDisplayingWords();
+            });
+            document.addEventListener('mouseup', () => {
+                this.isMouseDown = false;
+                clearInterval(this.displayInterval);
+            });
+        }
 
         this.switchButton.addEventListener('click', () => {
             this.currentTextKey = this.currentTextKey === 'calm-breathing' ? 'kindness' : 'calm-breathing';
