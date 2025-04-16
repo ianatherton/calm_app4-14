@@ -34,11 +34,11 @@ for all throughout the cosmos ~
 in all its height, depth and breadth- ~
 a love that is untroubled ~
 and beyond hatred and ill-will ~
-whether standing or walking, sitting or lying, ~
+whether standing or walking, sitting or lying-down, ~
 as long as we are awake, ~
-maintain this mindfulness of love ~
+maintain this awareness of peace ~
 this is the noblest way of living. ~
-free from wrong views, greed, and sensual desires, ~
+free from wrong-views, greed, and sense desires, ~
 living in beauty and realizing perfect understanding, ~
 those who practice boundless love ~
 will certainly transcend birth and death.~`
@@ -140,16 +140,29 @@ class WordDisplay {
         wordElement.classList.add('visible');
         this.visibleWords.push(wordElement);
 
-        // Scroll to the new word smoothly
-        wordElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // No scrolling needed; smooth transitions are handled by CSS
 
-        // Remove old words
+        // If queue is full, smoothly scroll the group up
         if (this.visibleWords.length > 5) {
-            const oldestWord = this.visibleWords.shift();
-            oldestWord.classList.add('fade-out');
+            const wordsList = this.wordsList;
+            const wordHeight = this.visibleWords[0].offsetHeight + parseFloat(getComputedStyle(wordsList).gap || 0);
+            wordsList.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+            wordsList.style.transform = `translateY(-${wordHeight}px)`;
+
             setTimeout(() => {
-                oldestWord.remove();
-            }, 1000);
+                // Remove the top word after scroll
+                const oldestWord = this.visibleWords.shift();
+                if (oldestWord && oldestWord.parentNode) {
+                    oldestWord.parentNode.removeChild(oldestWord);
+                }
+                // Reset transform for next scroll
+                wordsList.style.transition = 'none';
+                wordsList.style.transform = 'translateY(0)';
+                // Force reflow to apply the reset immediately
+                void wordsList.offsetWidth;
+                // Restore transition for next time
+                wordsList.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+            }, 600);
         }
     }
 
