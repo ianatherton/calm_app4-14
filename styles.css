@@ -13,7 +13,7 @@ body {
     align-items: center;
     min-height: 100vh;
     /* Gradient from light blue (top) to deeper blue (bottom) */
-    background: linear-gradient(to top, #2563eb 0%, #87cefa 100%);
+    background: linear-gradient(to bottom, #2589fb 0%, #83a4ec 100%);
     font-family: 'Lexend', Arial, sans-serif;
     font-weight: 600;
     overflow-x: hidden;
