@@ -13,9 +13,53 @@ body {
     align-items: center;
     min-height: 100vh;
     /* Gradient from light blue (top) to deeper blue (bottom) */
-    background: linear-gradient(to bottom, #87cefa 0%, #2563eb 100%);
+    background: linear-gradient(to top, #2563eb 0%, #87cefa 100%);
     font-family: 'Lexend', Arial, sans-serif;
     font-weight: 600;
+    overflow-x: hidden;
+}
+
+#mountain-bg-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 40vh;
+    pointer-events: none;
+    z-index: 0;
+}
+
+#mountain-bg {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.8;
+    filter: blur(2.5px) brightness(0.93);
+}
+
+#clouds-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.cloud {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0.9;
+    z-index: 2;
+    transition: opacity 0.5s;
 }
 
 #app, #app * {

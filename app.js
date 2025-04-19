@@ -178,6 +178,68 @@ class WordDisplay {
     }
 }
 
+// --- Cloud Animation Logic ---
+const cloudImages = [
+    'static/art/clouds_1.png',
+    'static/art/clouds_2.png',
+    'static/art/clouds_3.png',
+    'static/art/clouds_4.png',
+    'static/art/clouds_5.png',
+    'static/art/clouds_6.png',
+    'static/art/clouds_7.png'
+];
+
+function randomBetween(a, b) {
+    return a + Math.random() * (b - a);
+}
+
+function spawnCloud() {
+    const cloudsContainer = document.getElementById('clouds-container');
+    if (!cloudsContainer) return;
+    const cloud = document.createElement('img');
+    cloud.src = cloudImages[Math.floor(Math.random() * cloudImages.length)];
+    cloud.className = 'cloud';
+    // Set random size (scale)
+    // Use a reasonable scale for large but visible clouds
+    const scale = randomBetween(0.8, 1.8);
+    cloud.style.width = `${160 * scale}px`;
+    cloud.style.height = 'auto';
+    // Compute cloud height (approximate, since image aspect ratio is preserved)
+    const cloudHeight = 80 * scale; // assume base cloud height is 80px
+    // Set random vertical position: halfway up mountain and above, but always on screen
+    const vh = window.innerHeight;
+    const mountainHeight = vh * 0.4;
+    const minY = Math.max(0, vh - mountainHeight - (vh * 0.25)); // halfway up mountain and higher
+    const maxY = Math.max(0, vh - mountainHeight - (vh * 0.65)); // up to 65% above mountain
+    // Ensure cloud is always fully visible vertically
+    const y = randomBetween(Math.max(0, maxY), Math.min(vh - cloudHeight, minY));
+    cloud.style.top = `${y}px`;
+    cloud.style.left = '100vw';
+    cloud.style.opacity = randomBetween(0.7, 1.0);
+    // Animation duration: slower for bigger clouds
+    const duration = randomBetween(28, 36) * scale; // bigger clouds move slower
+    cloud.style.transition = `transform ${duration}s linear, opacity 0.5s`;
+    cloudsContainer.appendChild(cloud);
+    // Animate
+    setTimeout(() => {
+        cloud.style.transform = `translateX(-110vw)`;
+    }, 50);
+    // Remove when offscreen
+    setTimeout(() => {
+        cloud.style.opacity = 0;
+        setTimeout(() => cloud.remove(), 500);
+    }, duration * 1000);
+}
+
+function startClouds() {
+    function loop() {
+        spawnCloud();
+        setTimeout(loop, randomBetween(2000, 5000));
+    }
+    loop();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     new WordDisplay();
+    startClouds();
 });
