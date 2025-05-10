@@ -1,7 +1,7 @@
 // Texts for different meditation experiences
 const texts = {
     'calm-breathing': 'Breathing In I Enjoy My In-Breath _ Breathing Out I Enjoy My Out-Breath _',
-    'kindness': `This is what should be done,
+    'kindness': `This is what is done,
 by one who is skilled in goodness _ 
 having glimpsed the state of perfect calm,
 let them be honest and upright _
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let scrollInterval = null;
     let isScrolling = false;
     let currentTextKey = 'calm-breathing';
+    let speedFactor = 0.8; // Default speed factor (1.0 = normal speed, higher = faster, lower = slower)
     
     // Initialize the application
     function init() {
@@ -194,11 +195,41 @@ document.addEventListener('DOMContentLoaded', function() {
         stopScrolling();
     }
     
+    // Calculate timing values based on speed factor
+    function getTimingValues() {
+        // Base timing values at speedFactor = 1.0
+        const baseStepInterval = 700; // ms between steps
+        const baseTransitionDuration = 0.65; // seconds for animation
+        const baseTimeoutDuration = 630; // ms for timeout
+        
+        // Calculate adjusted values
+        return {
+            stepInterval: Math.round(baseStepInterval / speedFactor),
+            transitionDuration: baseTransitionDuration / speedFactor,
+            timeoutDuration: Math.round(baseTimeoutDuration / speedFactor)
+        };
+    }
+    
+    // Set the speed of text scrolling
+    function setScrollSpeed(factor) {
+        // Ensure factor is positive
+        speedFactor = Math.max(0.1, factor);
+        
+        // If currently scrolling, restart with new timing
+        if (isScrolling) {
+            stopScrolling();
+            startScrolling();
+        }
+        
+        return speedFactor; // Return the actual value used
+    }
+    
     // Start the scrolling animation
     function startScrolling() {
         if (!isScrolling && wordsList.length > 0) {
             isScrolling = true;
-            scrollInterval = setInterval(scrollStep, 700); // 700ms per step (was 400ms) - slower scrolling
+            const { stepInterval } = getTimingValues();
+            scrollInterval = setInterval(scrollStep, stepInterval);
         }
     }
     
@@ -210,8 +241,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle a single scroll step
     function scrollStep() {
-        // First, ensure the transition is enabled with the same timing as in CSS
-        wordContainer.style.transition = 'transform 0.65s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        // Get timing values based on current speed factor
+        const { transitionDuration, timeoutDuration } = getTimingValues();
+        
+        // First, ensure the transition is enabled with timing based on speed factor
+        wordContainer.style.transition = `transform ${transitionDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
         
         // Animate container moving up one line
         wordContainer.style.transform = `translateY(-${lineHeight}px)`;
@@ -238,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             void wordContainer.offsetHeight;
             
             // The next animation will happen on the next scrollStep call
-        }, 630); // Slightly less than the transition duration (0.65s = 650ms) to avoid jerky motion
+        }, timeoutDuration); // Based on speed factor
     }
     
     // Initialize the application
