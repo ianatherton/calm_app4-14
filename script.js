@@ -1,6 +1,6 @@
 // Texts for different meditation experiences
 const texts = {
-    'calm-breathing': 'Breathing In I Enjoy My In-Breath _ Breathing Out I Enjoy My Out-Breath _',
+    'calm-breathing': 'Breathing In _ I Enjoy My In-Breath _ Breathing Out _ I Enjoy My Out-Breath _',
     'kindness': `This is what is done,
 by one who is skilled in goodness _ 
 having glimpsed the state of perfect calm,
@@ -329,8 +329,9 @@ document.addEventListener('DOMContentLoaded', function() {
         cloud.style.opacity = randomBetween(0.7, 1.0);
         
         // Animation duration: faster for closer clouds (bottom clouds)
-        // Map from 60s (top/very slow) to 25s (bottom/fast)
-        const duration = 60 - (distanceFromTop * 35);
+        // Map from 75s (top/very slow) to 22.5s (bottom/fast)
+        // Top clouds 25% slower (60s * 1.25 = 75s), bottom clouds 10% faster (25s * 0.9 = 22.5s)
+        const duration = 75 - (distanceFromTop * 52.5);
         cloud.style.transition = `transform ${duration}s linear, opacity 0.5s`;
         cloudsContainer.appendChild(cloud);
         // Animate
