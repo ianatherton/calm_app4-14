@@ -7,19 +7,34 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Mountain and cloud background from old app -->
     <div id="mountain-bg-container">
         <img id="mountain-bg" src="static/art/background_mountain.png" alt="Mountain Background">
         <div id="clouds-container"></div>
     </div>
-    <div id="app">
-        <div id="word-container">
-            <div id="words-list"></div>
-        </div>
-        <div id="controls">
-            <button id="text-selector">Switch Text</button>
-        </div>
-        <div id="debug-display" style="text-align:center; margin-top:20px; color:#888; font-size:14px;"></div>
+    <div id="controls-area">
+        <button id="text-switcher-btn">Switch to Kindness Text</button>
     </div>
-    <script src="app.js"></script>
+
+    <div id="word-scroller-app" role="application" aria-label="Smooth Word Scroller">
+        <div id="word-scroller-viewport" aria-live="polite" aria-atomic="false" 
+            aria-relevant="text" aria-describedby="scroller-instructions">
+            <div id="word-scroller-container">
+                <div class="word-line" data-slot-id="1" aria-hidden="true"><span></span></div> <!-- Top Buffer -->
+                <div class="word-line" data-slot-id="2"><span></span></div> <!-- Visible 1 -->
+                <div class="word-line" data-slot-id="3"><span></span></div> <!-- Visible 2 -->
+                <div class="word-line" data-slot-id="4"><span></span></div> <!-- Visible 3 -->
+                <div class="word-line" data-slot-id="5"><span></span></div> <!-- Visible 4 -->
+                <div class="word-line" data-slot-id="6"><span></span></div> <!-- Visible 5 -->
+                <div class="word-line" data-slot-id="7"><span></span></div> <!-- Visible 6 (newest underlined) -->
+                <div class="word-line" data-slot-id="8" aria-hidden="true"><span></span></div> <!-- Bottom Buffer -->
+            </div>
+        </div>
+        <div id="scroller-instructions" class="visually-hidden">
+            Text scrolls word by word. Click and hold to scroll. Release to stop. Maximum 6 words visible.
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
