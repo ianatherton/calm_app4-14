@@ -256,6 +256,9 @@ body {
         min-width: 120px;
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
+        z-index: 1000; /* Ensure button is in foreground */
+        position: relative; /* Required for z-index to work */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow for better visibility */
     }
     
     #desktop-icon {
@@ -268,13 +271,20 @@ body {
     
     /* Ensure clean cutoff for words on mobile */
     #word-scroller-viewport {
+        height: calc(6 * 3em - 15px); /* Even shorter to prevent seeing next word */
         mask-image: linear-gradient(to bottom, 
             rgba(0,0,0,1) 0%, 
-            rgba(0,0,0,1) 90%, 
+            rgba(0,0,0,1) 92%, 
             rgba(0,0,0,0) 100%);
         -webkit-mask-image: linear-gradient(to bottom, 
             rgba(0,0,0,1) 0%, 
-            rgba(0,0,0,1) 90%, 
+            rgba(0,0,0,1) 92%, 
             rgba(0,0,0,0) 100%);
+        overflow: hidden;
+    }
+    
+    #bottom-controls {
+        bottom: 30px; /* Move button even lower on mobile */
+        z-index: 999; /* High z-index for the controls container */
     }
 }
