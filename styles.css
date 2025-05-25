@@ -185,6 +185,34 @@ body {
     }
 }
 
+/* Device indicator */
+#device-indicator {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+#desktop-icon, #mobile-icon {
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+#mobile-icon {
+    display: none;
+}
+
 /* Make app responsive */
 @media (max-width: 520px) {
     #text-input-area,
@@ -195,5 +223,22 @@ body {
     .word-line {
         font-size: 1.1em;
         padding: 0 10px;
+    }
+    
+    #text-switcher-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+        width: 80%;
+        max-width: 300px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    #desktop-icon {
+        display: none;
+    }
+    
+    #mobile-icon {
+        display: block;
     }
 }

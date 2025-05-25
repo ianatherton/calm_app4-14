@@ -62,6 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const wordContainer = document.getElementById('word-scroller-container');
     const wordLineElements = Array.from(document.querySelectorAll('.word-line'));
     const wordSpans = Array.from(document.querySelectorAll('.word-line span'));
+    const desktopIcon = document.getElementById('desktop-icon');
+    const mobileIcon = document.getElementById('mobile-icon');
     
     // State Variables
     let wordsList = [];
@@ -85,15 +87,47 @@ document.addEventListener('DOMContentLoaded', function() {
         // Load initial text
         loadText(texts[currentTextKey]);
         
-        // Add event listeners for interactions
-        document.body.addEventListener('mousedown', onPressStart);
+        // Detect device type
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 520;
+        
+        // Set appropriate icon
+        if (isMobileDevice) {
+            desktopIcon.style.display = 'none';
+            mobileIcon.style.display = 'block';
+        } else {
+            desktopIcon.style.display = 'block';
+            mobileIcon.style.display = 'none';
+        }
+        
+        // Add event listeners for interactions - exclude the button from starting scroll
+        document.body.addEventListener('mousedown', function(e) {
+            // Don't trigger scrolling if clicking the text switcher button
+            if (!e.target.closest('#text-switcher-btn')) {
+                onPressStart(e);
+            }
+        });
         document.body.addEventListener('mouseup', onPressEnd);
         document.body.addEventListener('mouseleave', onPressEnd);
-        document.body.addEventListener('touchstart', onPressStart, { passive: true });
-        document.body.addEventListener('touchend', onPressEnd);
         
-        // Text switcher button event listener
-        textSwitcherBtn.addEventListener('click', function() {
+        // Touch events with improved handling for mobile
+        document.body.addEventListener('touchstart', function(e) {
+            // Don't trigger scrolling if touching the text switcher button
+            if (!e.target.closest('#text-switcher-btn')) {
+                onPressStart(e);
+            }
+        }, { passive: true });
+        document.body.addEventListener('touchend', function(e) {
+            // Only end scrolling if not on the button
+            if (!e.target.closest('#text-switcher-btn')) {
+                onPressEnd(e);
+            }
+        });
+        
+        // Text switcher button event listener with improvements for mobile
+        textSwitcherBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent any default behavior
+            e.stopPropagation(); // Stop event from bubbling up
+            
             // Toggle between text options
             currentTextKey = currentTextKey === 'calm-breathing' ? 'kindness' : 'calm-breathing';
             
@@ -102,7 +136,21 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Load the new text
             loadText(texts[currentTextKey]);
+            
+            // Ensure scrolling stops if it was happening
+            stopScrolling();
+            isPressed = false;
         });
+        
+        // Additional touch event specifically for the button on mobile
+        if (isMobileDevice) {
+            textSwitcherBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Simulate a click
+                textSwitcherBtn.click();
+            });
+        }
         
         // Keyboard support
         document.body.addEventListener('keydown', function(e) {
