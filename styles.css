@@ -20,6 +20,11 @@ body {
     background: linear-gradient(to bottom, #2589fb 0%, #83a4ec 100%);
     overflow-x: hidden;
     color: #333;
+    /* Disable text selection */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 #mountain-bg-container {
@@ -65,20 +70,25 @@ body {
     transition: opacity 0.5s;
 }
 
-#controls-area {
-    margin-bottom: 20px;
+/* Bottom controls area */
+#bottom-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: center;
     width: 100%;
-    max-width: 500px;
-    z-index: 10;
-    position: relative;
+    z-index: 100;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 #text-switcher-btn {
     padding: 12px 24px;
-    border-radius: 6px;
+    border-radius: 30px;
     border: none;
     background-color: #4361ee;
     color: white;
@@ -87,6 +97,10 @@ body {
     transition: background-color 0.2s ease, transform 0.2s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     font-size: 1rem;
+    min-width: 150px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
 }
 
 #text-switcher-btn:hover {
@@ -122,6 +136,15 @@ body {
     background-color: transparent;
     position: relative;
     border-radius: 8px;
+    /* Ensure clean cutoff for words */
+    mask-image: linear-gradient(to bottom, 
+        rgba(0,0,0,1) 0%, 
+        rgba(0,0,0,1) 95%, 
+        rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, 
+        rgba(0,0,0,1) 0%, 
+        rgba(0,0,0,1) 95%, 
+        rgba(0,0,0,0) 100%);
 }
 
 #word-scroller-container {
@@ -130,6 +153,8 @@ body {
     transition: transform 0.65s cubic-bezier(0.25, 0.1, 0.25, 1);
     will-change: transform;
     backface-visibility: hidden;
+    /* Add slight padding to better hide partial words */
+    padding-bottom: 0.5em;
 }
 
 .word-line {
@@ -187,9 +212,6 @@ body {
 
 /* Device indicator */
 #device-indicator {
-    position: fixed;
-    bottom: 15px;
-    left: 15px;
     width: 40px;
     height: 40px;
     background-color: rgba(255, 255, 255, 0.2);
@@ -201,6 +223,9 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    position: absolute;
+    left: 15px;
+    bottom: 0;
 }
 
 #desktop-icon, #mobile-icon {
@@ -226,10 +251,9 @@ body {
     }
     
     #text-switcher-btn {
-        padding: 14px 20px;
+        padding: 12px 20px;
         font-size: 1rem;
-        width: 80%;
-        max-width: 300px;
+        min-width: 120px;
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
     }
@@ -240,5 +264,17 @@ body {
     
     #mobile-icon {
         display: block;
+    }
+    
+    /* Ensure clean cutoff for words on mobile */
+    #word-scroller-viewport {
+        mask-image: linear-gradient(to bottom, 
+            rgba(0,0,0,1) 0%, 
+            rgba(0,0,0,1) 90%, 
+            rgba(0,0,0,0) 100%);
+        -webkit-mask-image: linear-gradient(to bottom, 
+            rgba(0,0,0,1) 0%, 
+            rgba(0,0,0,1) 90%, 
+            rgba(0,0,0,0) 100%);
     }
 }

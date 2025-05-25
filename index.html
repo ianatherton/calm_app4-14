@@ -13,9 +13,7 @@
         <img id="mountain-bg" src="static/art/background_mountain.png" alt="Mountain Background">
         <div id="clouds-container"></div>
     </div>
-    <div id="controls-area">
-        <button id="text-switcher-btn">Switch to Kindness Text</button>
-    </div>
+    <!-- Controls area moved to bottom -->
 
     <div id="word-scroller-app" role="application" aria-label="Smooth Word Scroller">
         <div id="word-scroller-viewport" aria-live="polite" aria-atomic="false" 
@@ -36,10 +34,14 @@
         </div>
     </div>
 
-    <!-- Device indicator icon -->    
-    <div id="device-indicator">
-        <i id="desktop-icon" class="fas fa-desktop"></i>
-        <i id="mobile-icon" class="fas fa-mobile-alt"></i>
+    <!-- Bottom controls area -->
+    <div id="bottom-controls">
+        <div id="device-indicator">
+            <i id="desktop-icon" class="fas fa-desktop"></i>
+            <i id="mobile-icon" class="fas fa-mobile-alt"></i>
+        </div>
+        
+        <button id="text-switcher-btn">Kindness Text</button>
     </div>
     
     <script src="script.js"></script>

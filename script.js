@@ -84,6 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initial position of container (top buffer hidden)
         wordContainer.style.top = `-${lineHeight}px`;
         
+        // Set initial button text - simplified without "Switch to"
+        textSwitcherBtn.textContent = currentTextKey === 'calm-breathing' ? 'Kindness Text' : 'Breathing Text';
+        
         // Load initial text
         loadText(texts[currentTextKey]);
         
@@ -131,8 +134,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Toggle between text options
             currentTextKey = currentTextKey === 'calm-breathing' ? 'kindness' : 'calm-breathing';
             
-            // Update button text
-            textSwitcherBtn.textContent = currentTextKey === 'calm-breathing' ? 'Switch to Kindness Text' : 'Switch to Breathing Text';
+            // Update button text - simplified without "Switch to"
+            textSwitcherBtn.textContent = currentTextKey === 'calm-breathing' ? 'Kindness Text' : 'Breathing Text';
             
             // Load the new text
             loadText(texts[currentTextKey]);
