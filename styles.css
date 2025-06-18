@@ -239,6 +239,113 @@ body {
 }
 
 /* Make app responsive */
+/* Tutorial popup styles */
+#tutorial-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 280px;
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#tutorial-popup.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#tutorial-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#tutorial-icons {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#tutorial-fingertip {
+    width: 50px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    animation: hover-animation 1.5s ease-in-out infinite;
+}
+
+#tutorial-device-desktop,
+#tutorial-device-mobile {
+    width: 80px;
+    height: auto;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#tutorial-device-mobile {
+    display: none;
+}
+
+@keyframes hover-animation {
+    0% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-15px);
+    }
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.finger-press {
+    animation: press-animation 0.3s ease-in-out forwards !important;
+}
+
+@keyframes press-animation {
+    0% {
+        transform: translateX(-50%) translateY(-15px);
+    }
+    100% {
+        transform: translateX(-50%) translateY(15px);
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
 @media (max-width: 520px) {
     #text-input-area,
     #word-scroller-app {
@@ -266,6 +373,14 @@ body {
     }
     
     #mobile-icon {
+        display: block;
+    }
+    
+    #tutorial-device-desktop {
+        display: none;
+    }
+    
+    #tutorial-device-mobile {
         display: block;
     }
     

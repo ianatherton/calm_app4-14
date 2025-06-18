@@ -64,6 +64,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const wordSpans = Array.from(document.querySelectorAll('.word-line span'));
     const desktopIcon = document.getElementById('desktop-icon');
     const mobileIcon = document.getElementById('mobile-icon');
+    const tutorialPopup = document.getElementById('tutorial-popup');
+    const tutorialFingertip = document.getElementById('tutorial-fingertip');
+    const tutorialDeviceDesktop = document.getElementById('tutorial-device-desktop');
+    const tutorialDeviceMobile = document.getElementById('tutorial-device-mobile');
     
     // State Variables
     let wordsList = [];
@@ -75,6 +79,35 @@ document.addEventListener('DOMContentLoaded', function() {
     let isScrolling = false;
     let currentTextKey = 'calm-breathing';
     let speedFactor = 0.8; // Default speed factor (1.0 = normal speed, higher = faster, lower = slower)
+    let inactivityTimer = null;
+    
+    // Tutorial popup functions
+    function showTutorial() {
+        tutorialPopup.classList.add('visible');
+    }
+    
+    function hideTutorial() {
+        tutorialFingertip.classList.add('finger-press');
+        
+        setTimeout(() => {
+            tutorialPopup.style.animation = 'fade-out 0.5s ease-in-out forwards';
+            
+            setTimeout(() => {
+                tutorialPopup.classList.remove('visible');
+                tutorialPopup.style.animation = '';
+                tutorialFingertip.classList.remove('finger-press');
+            }, 500);
+        }, 300);
+    }
+    
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        
+        // Always set a new timer for the tutorial
+        inactivityTimer = setTimeout(() => {
+            showTutorial();
+        }, 10000); // 10 seconds
+    }
     
     // Initialize the application
     function init() {
@@ -102,11 +135,18 @@ document.addEventListener('DOMContentLoaded', function() {
             mobileIcon.style.display = 'none';
         }
         
+        // Always show tutorial on page load
+        showTutorial();
+        
+        // Start inactivity timer
+        resetInactivityTimer();
+        
         // Add event listeners for interactions - exclude the button from starting scroll
         document.body.addEventListener('mousedown', function(e) {
             // Don't trigger scrolling if clicking the text switcher button
             if (!e.target.closest('#text-switcher-btn')) {
                 onPressStart(e);
+                resetInactivityTimer();
             }
         });
         document.body.addEventListener('mouseup', onPressEnd);
@@ -117,6 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Don't trigger scrolling if touching the text switcher button
             if (!e.target.closest('#text-switcher-btn')) {
                 onPressStart(e);
+                resetInactivityTimer();
             }
         }, { passive: true });
         document.body.addEventListener('touchend', function(e) {
@@ -125,6 +166,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 onPressEnd(e);
             }
         });
+        
+        // Reset inactivity timer on scroll, mousemove, and keydown
+        document.addEventListener('scroll', resetInactivityTimer);
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keydown', resetInactivityTimer);
         
         // Text switcher button event listener with improvements for mobile
         textSwitcherBtn.addEventListener('click', function(e) {
@@ -233,6 +279,11 @@ document.addEventListener('DOMContentLoaded', function() {
             isPressed = true;
             document.body.classList.add('scrolling-active');
             startScrolling();
+            
+            // Hide tutorial when scrolling starts
+            if (tutorialPopup.classList.contains('visible')) {
+                hideTutorial();
+            }
         }, 250);
     }
     
@@ -280,7 +331,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isScrolling && wordsList.length > 0) {
             isScrolling = true;
             const { stepInterval } = getTimingValues();
-            scrollInterval = setInterval(scrollStep, stepInterval);
+            scrollInterval = setInterval(() => {
+                // Reset inactivity timer while scrolling is active
+                resetInactivityTimer();
+                scrollStep();
+            }, stepInterval);
         }
     }
     
