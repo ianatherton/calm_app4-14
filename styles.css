@@ -238,6 +238,247 @@ body {
     display: none;
 }
 
+/* Meditation Timer Styles */
+#meditation-timer-icon {
+    position: absolute;
+    right: 15px;
+    bottom: 0;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#meditation-timer-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.clock-face {
+    width: 28px;
+    height: 28px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hour-hand, .minute-hand {
+    position: absolute;
+    background-color: #333;
+    transform-origin: bottom center;
+    border-radius: 2px;
+}
+
+.hour-hand {
+    width: 2px;
+    height: 8px;
+    top: 6px;
+}
+
+.minute-hand {
+    width: 1.5px;
+    height: 10px;
+    top: 4px;
+}
+
+/* Clock animation classes */
+.clock-rotating .hour-hand {
+    animation: rotate-hour 7200s linear infinite; /* 2 hours rotation */
+}
+
+.clock-rotating .minute-hand {
+    animation: rotate-minute 600s linear infinite; /* 10 minutes rotation */
+}
+
+.clock-complete {
+    animation: clock-complete-animation 1s ease-in-out infinite alternate;
+}
+
+@keyframes rotate-hour {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes rotate-minute {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes clock-complete-animation {
+    0% { transform: scale(1) rotate(-5deg); }
+    100% { transform: scale(1.2) rotate(5deg); }
+}
+
+/* Timer Control Window */
+#timer-control-window {
+    position: absolute;
+    right: 60px;
+    bottom: 50px;
+    width: 250px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 99;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transform-origin: bottom right;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#timer-control-window.visible {
+    display: flex;
+    animation: popup-animation 0.3s ease-out forwards;
+}
+
+@keyframes popup-animation {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.timer-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.timer-display-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+#timer-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.show-timer-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.timer-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.time-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.time-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.time-input-group label {
+    font-size: 12px;
+    color: #666;
+}
+
+.time-input-group input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.timer-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.timer-buttons button {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    border-radius: 4px;
+    background-color: #4361ee;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.timer-buttons button:hover:not(:disabled) {
+    background-color: #3a56d4;
+}
+
+.timer-buttons button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.timer-stats {
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.stat-item:last-child {
+    margin-bottom: 0;
+}
+
+.stat-label-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-label {
+    color: #666;
+}
+
+.show-stat-container {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    color: #888;
+}
+
+#lines-read-count,
+#focused-time-count {
+    font-weight: bold;
+    color: #333;
+}
+
 /* Make app responsive */
 /* Tutorial popup styles */
 #tutorial-popup {

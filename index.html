@@ -53,6 +53,60 @@
         </div>
         
         <button id="text-switcher-btn">Kindness Text</button>
+        
+        <!-- Meditation Timer Clock Icon -->
+        <div id="meditation-timer-icon">
+            <div class="clock-face">
+                <div class="hour-hand"></div>
+                <div class="minute-hand"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Timer Control Window -->
+    <div id="timer-control-window">
+        <div class="timer-header">
+            <div class="timer-display-container">
+                <span id="timer-display">00:00</span>
+                <label class="show-timer-container">
+                    <input type="checkbox" id="show-timer-checkbox" checked>
+                    <span>Show</span>
+                </label>
+            </div>
+        </div>
+        <div class="timer-settings">
+            <div class="time-inputs">
+                <div class="time-input-group">
+                    <label for="min-time">Min Time (1-240)</label>
+                    <input type="number" id="min-time" min="1" max="240" value="10">
+                </div>
+                <div class="time-input-group">
+                    <label for="max-time">Max Time (1-240)</label>
+                    <input type="number" id="max-time" min="1" max="240" value="20">
+                </div>
+            </div>
+            <div class="timer-buttons">
+                <button id="start-timer-btn">Start</button>
+                <button id="pause-timer-btn" disabled>Pause</button>
+                <button id="reset-timer-btn" disabled>Reset</button>
+            </div>
+        </div>
+        <div class="timer-stats">
+            <div class="stat-item">
+                <span class="stat-label">Lines read today:</span>
+                <span id="lines-read-count">0</span>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label-container">
+                    <span class="stat-label">Focused time:</span>
+                    <label class="show-stat-container">
+                        <input type="checkbox" id="show-focused-time-checkbox" checked>
+                        <span>Show</span>
+                    </label>
+                </div>
+                <span id="focused-time-count">00:00:00</span>
+            </div>
+        </div>
     </div>
     
     <script src="script.js"></script>

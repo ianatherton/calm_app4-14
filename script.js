@@ -69,6 +69,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const tutorialDeviceDesktop = document.getElementById('tutorial-device-desktop');
     const tutorialDeviceMobile = document.getElementById('tutorial-device-mobile');
     
+    // Meditation Timer DOM Elements
+    const meditationTimerIcon = document.getElementById('meditation-timer-icon');
+    const timerControlWindow = document.getElementById('timer-control-window');
+    const timerDisplay = document.getElementById('timer-display');
+    const showTimerCheckbox = document.getElementById('show-timer-checkbox');
+    const minTimeInput = document.getElementById('min-time');
+    const maxTimeInput = document.getElementById('max-time');
+    const startTimerBtn = document.getElementById('start-timer-btn');
+    const pauseTimerBtn = document.getElementById('pause-timer-btn');
+    const resetTimerBtn = document.getElementById('reset-timer-btn');
+    const linesReadCount = document.getElementById('lines-read-count');
+    const focusedTimeCount = document.getElementById('focused-time-count');
+    const showFocusedTimeCheckbox = document.getElementById('show-focused-time-checkbox');
+    
     // State Variables
     let wordsList = [];
     let currentIndex = 0;
@@ -80,6 +94,19 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentTextKey = 'calm-breathing';
     let speedFactor = 0.8; // Default speed factor (1.0 = normal speed, higher = faster, lower = slower)
     let inactivityTimer = null;
+    
+    // Meditation Timer State Variables
+    let timerInterval = null;
+    let timerRunning = false;
+    let timerPaused = false;
+    let timerDuration = 0; // in seconds
+    let timeRemaining = 0; // in seconds
+    let linesReadToday = 0;
+    
+    // Focused Time State Variables
+    let focusedTimeSeconds = 0;
+    let focusedTimeInterval = null;
+    let focusStartTime = 0;
     
     // Tutorial popup functions
     function showTutorial() {
@@ -143,8 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add event listeners for interactions - exclude the button from starting scroll
         document.body.addEventListener('mousedown', function(e) {
-            // Don't trigger scrolling if clicking the text switcher button
-            if (!e.target.closest('#text-switcher-btn')) {
+            // Don't trigger scrolling if clicking the text switcher button or timer elements
+            if (!e.target.closest('#text-switcher-btn') && !e.target.closest('#meditation-timer-icon') && !e.target.closest('#timer-control-window')) {
                 onPressStart(e);
                 resetInactivityTimer();
             }
@@ -154,15 +181,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Touch events with improved handling for mobile
         document.body.addEventListener('touchstart', function(e) {
-            // Don't trigger scrolling if touching the text switcher button
-            if (!e.target.closest('#text-switcher-btn')) {
+            // Don't trigger scrolling if touching the text switcher button or timer elements
+            if (!e.target.closest('#text-switcher-btn') && !e.target.closest('#meditation-timer-icon') && !e.target.closest('#timer-control-window')) {
                 onPressStart(e);
                 resetInactivityTimer();
             }
         }, { passive: true });
         document.body.addEventListener('touchend', function(e) {
-            // Only end scrolling if not on the button
-            if (!e.target.closest('#text-switcher-btn')) {
+            // Only end scrolling if not on the button or timer elements
+            if (!e.target.closest('#text-switcher-btn') && !e.target.closest('#meditation-timer-icon') && !e.target.closest('#timer-control-window')) {
                 onPressEnd(e);
             }
         });
@@ -215,6 +242,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 onPressEnd();
             }
         });
+        
+        // Initialize meditation timer functionality
+        initMeditationTimer();
+        
+        // Load lines read count from cookie
+        loadLinesRead();
+        
+        // Start cloud animations
+        startClouds();
     }
     
     // Load and process text
@@ -280,6 +316,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.add('scrolling-active');
             startScrolling();
             
+            // Start focused time tracking
+            startFocusedTimeTracking();
+            
             // Hide tutorial when scrolling starts
             if (tutorialPopup.classList.contains('visible')) {
                 hideTutorial();
@@ -295,6 +334,9 @@ document.addEventListener('DOMContentLoaded', function() {
         isPressed = false;
         document.body.classList.remove('scrolling-active');
         stopScrolling();
+        
+        // Stop focused time tracking
+        stopFocusedTimeTracking();
     }
     
     // Calculate timing values based on speed factor
@@ -370,6 +412,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update display with new word positions
             updateDisplay();
             
+            // Increment lines read count when a new line is revealed
+            // Only count actual words, not blank lines (represented by '_')
+            const newWordIndex = (currentIndex + 6) % wordsList.length; // Index of the newest visible word (slot 7)
+            if (wordsList[newWordIndex] !== '_') {
+                incrementLinesRead();
+            }
+            
             // Reset container position without animation
             wordContainer.style.transition = 'none';
             wordContainer.style.transform = 'translateY(0)';
@@ -390,10 +439,267 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start cloud animations
     startClouds();
     
-    // Cloud animation functions
+    // Meditation Timer Functions
+    function initMeditationTimer() {
+        // Toggle timer window when clicking the clock icon
+        meditationTimerIcon.addEventListener('click', function() {
+            timerControlWindow.classList.toggle('visible');
+        });
+        
+        // Close timer window when clicking outside of it
+        document.addEventListener('click', function(e) {
+            if (!timerControlWindow.contains(e.target) && e.target !== meditationTimerIcon && timerControlWindow.classList.contains('visible')) {
+                timerControlWindow.classList.remove('visible');
+            }
+        });
+        
+        // Timer control buttons event listeners
+        startTimerBtn.addEventListener('click', startTimer);
+        pauseTimerBtn.addEventListener('click', pauseTimer);
+        resetTimerBtn.addEventListener('click', resetTimer);
+        
+        // Show/hide timer display based on checkbox
+        showTimerCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                timerDisplay.style.visibility = 'visible';
+            } else {
+                timerDisplay.style.visibility = 'hidden';
+            }
+        });
+        
+        // Show/hide focused time display based on checkbox
+        showFocusedTimeCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                focusedTimeCount.style.visibility = 'visible';
+            } else {
+                focusedTimeCount.style.visibility = 'hidden';
+            }
+        });
+        
+        // Validate min and max time inputs
+        minTimeInput.addEventListener('change', validateTimeInputs);
+        maxTimeInput.addEventListener('change', validateTimeInputs);
+        
+        // Load focused time from cookie
+        loadFocusedTime();
+    }
+    
+    function validateTimeInputs() {
+        let minTime = parseInt(minTimeInput.value);
+        let maxTime = parseInt(maxTimeInput.value);
+        
+        // Ensure values are within valid range
+        if (isNaN(minTime) || minTime < 1) minTimeInput.value = 1;
+        if (minTime > 240) minTimeInput.value = 240;
+        
+        if (isNaN(maxTime) || maxTime < 1) maxTimeInput.value = '';
+        if (maxTime > 240) maxTimeInput.value = 240;
+    }
+    
+    function startTimer() {
+        // Clear any existing timer
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        // Get min and max time values
+        const minTime = parseInt(minTimeInput.value) || 10; // Default to 10 minutes if not specified
+        const maxTime = parseInt(maxTimeInput.value) || minTime;
+        
+        // Calculate timer duration (in seconds)
+        if (maxTime > minTime) {
+            // Random time between min and max
+            timerDuration = Math.floor(Math.random() * (maxTime - minTime + 1) + minTime) * 60;
+        } else {
+            // Use min time
+            timerDuration = minTime * 60;
+        }
+        
+        // Set initial time remaining
+        timeRemaining = timerDuration;
+        
+        // Update display
+        updateTimerDisplay();
+        
+        // Start the clock animation
+        meditationTimerIcon.querySelector('.clock-face').classList.add('clock-rotating');
+        
+        // Start the timer interval
+        timerInterval = setInterval(updateTimer, 1000);
+        
+        // Update button states
+        startTimerBtn.disabled = true;
+        pauseTimerBtn.disabled = false;
+        resetTimerBtn.disabled = false;
+        
+        // Update timer state
+        timerRunning = true;
+        timerPaused = false;
+    }
+    
+    function updateTimer() {
+        if (timeRemaining > 0) {
+            timeRemaining--;
+            updateTimerDisplay();
+        } else {
+            // Timer complete
+            clearInterval(timerInterval);
+            timerRunning = false;
+            
+            // Stop clock rotation animation and start completion animation
+            const clockFace = meditationTimerIcon.querySelector('.clock-face');
+            clockFace.classList.remove('clock-rotating');
+            clockFace.classList.add('clock-complete');
+            
+            // Reset button states
+            startTimerBtn.disabled = false;
+            pauseTimerBtn.disabled = true;
+            
+            // Play notification sound or vibration if available
+            // This is a simple way to notify the user, but could be enhanced
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // Remove completion animation after 5 seconds
+            setTimeout(() => {
+                clockFace.classList.remove('clock-complete');
+            }, 5000);
+        }
+    }
+    
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    function pauseTimer() {
+        if (timerRunning && !timerPaused) {
+            clearInterval(timerInterval);
+            timerPaused = true;
+            pauseTimerBtn.textContent = 'Resume';
+            
+            // Pause clock animation
+            meditationTimerIcon.querySelector('.clock-face').classList.remove('clock-rotating');
+        } else if (timerRunning && timerPaused) {
+            // Resume timer
+            timerInterval = setInterval(updateTimer, 1000);
+            timerPaused = false;
+            pauseTimerBtn.textContent = 'Pause';
+            
+            // Resume clock animation
+            meditationTimerIcon.querySelector('.clock-face').classList.add('clock-rotating');
+        }
+    }
+    
+    function resetTimer() {
+        // Clear timer interval
+        clearInterval(timerInterval);
+        
+        // Reset timer state
+        timerRunning = false;
+        timerPaused = false;
+        timeRemaining = 0;
+        
+        // Update display
+        updateTimerDisplay();
+        
+        // Reset button states
+        startTimerBtn.disabled = false;
+        pauseTimerBtn.disabled = true;
+        resetTimerBtn.disabled = true;
+        pauseTimerBtn.textContent = 'Pause';
+        
+        // Stop clock animations
+        const clockFace = meditationTimerIcon.querySelector('.clock-face');
+        clockFace.classList.remove('clock-rotating');
+        clockFace.classList.remove('clock-complete');
+    }
+    
+    // Lines read tracking functions
+    function incrementLinesRead() {
+        linesReadToday++;
+        linesReadCount.textContent = linesReadToday;
+        saveLinesRead();
+    }
+    
+    // Cookie functions for lines read
+    function saveLinesRead() {
+        const expiryDate = new Date();
+        expiryDate.setHours(23, 59, 59, 999); // Set to end of current day
+        document.cookie = `linesReadToday=${linesReadToday};expires=${expiryDate.toUTCString()};path=/`;
+    }
+    
+    function loadLinesRead() {
+        const match = document.cookie.match(/linesReadToday=(\d+)/);
+        if (match) {
+            linesReadToday = parseInt(match[1], 10);
+            linesReadCount.textContent = linesReadToday;
+        }
+    }
+    
+    // Focused time tracking functions
+    function startFocusedTimeTracking() {
+        if (focusedTimeInterval === null) {
+            focusStartTime = Date.now();
+            focusedTimeInterval = setInterval(() => {
+                const elapsedSeconds = Math.floor((Date.now() - focusStartTime) / 1000);
+                focusedTimeSeconds += elapsedSeconds;
+                updateFocusedTimeDisplay();
+                saveFocusedTime();
+                focusStartTime = Date.now(); // Reset start time for next interval
+            }, 1000);
+        }
+    }
+    
+    function stopFocusedTimeTracking() {
+        if (focusedTimeInterval !== null) {
+            clearInterval(focusedTimeInterval);
+            focusedTimeInterval = null;
+            
+            // Add any remaining seconds since the last interval
+            const elapsedSeconds = Math.floor((Date.now() - focusStartTime) / 1000);
+            if (elapsedSeconds > 0) {
+                focusedTimeSeconds += elapsedSeconds;
+                updateFocusedTimeDisplay();
+                saveFocusedTime();
+            }
+        }
+    }
+    
+    function updateFocusedTimeDisplay() {
+        const hours = Math.floor(focusedTimeSeconds / 3600);
+        const minutes = Math.floor((focusedTimeSeconds % 3600) / 60);
+        const seconds = focusedTimeSeconds % 60;
+        
+        focusedTimeCount.textContent = [
+            hours.toString().padStart(2, '0'),
+            minutes.toString().padStart(2, '0'),
+            seconds.toString().padStart(2, '0')
+        ].join(':');
+    }
+    
+    // Cookie functions for focused time
+    function saveFocusedTime() {
+        const expiryDate = new Date();
+        expiryDate.setHours(23, 59, 59, 999); // Set to end of current day
+        document.cookie = `focusedTimeSeconds=${focusedTimeSeconds};expires=${expiryDate.toUTCString()};path=/`;
+    }
+    
+    function loadFocusedTime() {
+        const match = document.cookie.match(/focusedTimeSeconds=(\d+)/);
+        if (match) {
+            focusedTimeSeconds = parseInt(match[1], 10);
+            updateFocusedTimeDisplay();
+        }
+    }
+    
+    // Helper function for random numbers
     function randomBetween(a, b) {
         return a + Math.random() * (b - a);
     }
+    
 
     function spawnCloud() {
         const cloudsContainer = document.getElementById('clouds-container');
