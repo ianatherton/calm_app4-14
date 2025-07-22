@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Meditation Timer DOM Elements
     const meditationTimerIcon = document.getElementById('meditation-timer-icon');
+    const timerClickOverlay = document.getElementById('timer-click-overlay');
     const timerControlWindow = document.getElementById('timer-control-window');
     const timerDisplay = document.getElementById('timer-display');
     const showTimerCheckbox = document.getElementById('show-timer-checkbox');
@@ -449,14 +450,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Meditation Timer Functions
     function initMeditationTimer() {
-        // Toggle timer window when clicking the clock icon
-        meditationTimerIcon.addEventListener('click', function() {
+        // Toggle timer window when clicking the overlay button
+        timerClickOverlay.addEventListener('click', function() {
             timerControlWindow.classList.toggle('visible');
         });
         
         // Close timer window when clicking outside of it
         document.addEventListener('click', function(e) {
-            if (!timerControlWindow.contains(e.target) && e.target !== meditationTimerIcon && timerControlWindow.classList.contains('visible')) {
+            if (!timerControlWindow.contains(e.target) && e.target !== timerClickOverlay && !meditationTimerIcon.contains(e.target) && timerControlWindow.classList.contains('visible')) {
                 timerControlWindow.classList.remove('visible');
             }
         });
