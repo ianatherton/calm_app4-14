@@ -70,6 +70,44 @@ body {
     transition: opacity 0.5s;
 }
 
+/* Music toggle icon in top left */
+#music-toggle-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 200;
+    cursor: pointer;
+}
+
+#music-toggle-icon {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#music-toggle-icon:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+#music-toggle-icon.playing {
+    color: #4361ee;
+    background-color: rgba(255, 255, 255, 0.9);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
 /* Bottom controls area */
 #bottom-controls {
     position: fixed;
@@ -185,6 +223,29 @@ body {
     color: #FFD700; /* Brighter gold for emphasis */
     text-shadow: 0 0 10px rgba(255, 166, 0, 0.9), 0 0 20px rgba(255, 215, 0, 0.7);
     font-weight: 700;
+    /* Add glow effect */
+    position: relative;
+}
+
+/* Create the glow effect with a pseudo-element */
+.word-line[data-slot-id="7"].newest-visible::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% + 30px);
+    height: calc(100% + 10px);
+    border-radius: 15px;
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0) 70%);
+    z-index: -1;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
 .visually-hidden {

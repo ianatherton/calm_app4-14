@@ -83,6 +83,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const focusedTimeCount = document.getElementById('focused-time-count');
     const showFocusedTimeCheckbox = document.getElementById('show-focused-time-checkbox');
     
+    // Music toggle DOM elements
+    const musicToggleIcon = document.getElementById('music-toggle-icon');
+    const musicToggleContainer = document.getElementById('music-toggle-container');
+    
     // State Variables
     let wordsList = [];
     let currentIndex = 0;
@@ -107,6 +111,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let focusedTimeSeconds = 0;
     let focusedTimeInterval = null;
     let focusStartTime = 0;
+    
+    // Music State Variables
+    let isPlayingMusic = false;
+    let backgroundMusic = null;
     
     // Tutorial popup functions
     function showTutorial() {
@@ -764,4 +772,67 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         loop();
     }
+    
+    // Music toggle functions
+    function initMusicToggle() {
+        try {
+            // Initialize HTML5 Audio with the converted MP3 file
+            backgroundMusic = new Audio('static/bach_prelude.mp3');
+            backgroundMusic.loop = true;
+            backgroundMusic.volume = 0.3; // Set to 30% volume for background music
+            
+            console.log('Background music initialized successfully');
+        } catch (error) {
+            console.error('Error initializing background music:', error);
+        }
+        
+        // Add click event listener to music toggle
+        musicToggleContainer.addEventListener('click', toggleMusic);
+    }
+    
+    function toggleMusic() {
+        if (isPlayingMusic) {
+            stopMusic();
+        } else {
+            playMusic();
+        }
+    }
+    
+    function playMusic() {
+        if (!backgroundMusic) {
+            console.log('Background music not available');
+            return;
+        }
+        
+        try {
+            backgroundMusic.play();
+            isPlayingMusic = true;
+            musicToggleIcon.classList.add('playing');
+            console.log('Background music started');
+            
+        } catch (error) {
+            console.error('Error playing background music:', error);
+        }
+    }
+    
+    function stopMusic() {
+        try {
+            if (backgroundMusic) {
+                backgroundMusic.pause();
+                backgroundMusic.currentTime = 0; // Reset to beginning
+            }
+            
+            isPlayingMusic = false;
+            musicToggleIcon.classList.remove('playing');
+            console.log('Background music stopped');
+            
+        } catch (error) {
+            console.error('Error stopping background music:', error);
+            isPlayingMusic = false;
+            musicToggleIcon.classList.remove('playing');
+        }
+    }
+    
+    // Initialize music toggle
+    initMusicToggle();
 });
