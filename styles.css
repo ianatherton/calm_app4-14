@@ -299,6 +299,61 @@ body {
     display: none;
 }
 
+/* Text Switcher Container */
+#text-switcher-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Speed Control Styles */
+#speed-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.speed-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.speed-icon i {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+}
+
+.speed-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.speed-icon:hover i {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.speed-icon.active {
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.speed-icon.active i {
+    color: rgba(255, 255, 255, 1);
+}
+
 /* Meditation Timer Styles */
 #meditation-timer-icon {
     position: absolute;
@@ -377,6 +432,44 @@ body {
 
 .clock-rotating .minute-hand {
     animation: rotate-minute 600s linear infinite; /* 10 minutes rotation */
+}
+
+/* Alarm clock animation when timer finishes */
+.clock-alarm {
+    animation: alarm-shake 0.8s ease-in-out infinite;
+}
+
+@keyframes alarm-shake {
+    0%, 100% { 
+        transform: rotate(0deg) scale(1); 
+    }
+    10% { 
+        transform: rotate(-5deg) scale(1.05); 
+    }
+    20% { 
+        transform: rotate(5deg) scale(1.05); 
+    }
+    30% { 
+        transform: rotate(-3deg) scale(1.02); 
+    }
+    40% { 
+        transform: rotate(3deg) scale(1.02); 
+    }
+    50% { 
+        transform: rotate(-2deg) scale(1.01); 
+    }
+    60% { 
+        transform: rotate(2deg) scale(1.01); 
+    }
+    70% { 
+        transform: rotate(-1deg) scale(1); 
+    }
+    80% { 
+        transform: rotate(1deg) scale(1); 
+    }
+    90% { 
+        transform: rotate(0deg) scale(1); 
+    }
 }
 
 .clock-complete {

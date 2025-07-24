@@ -88,6 +88,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicToggleIcon = document.getElementById('music-toggle-icon');
     const musicToggleContainer = document.getElementById('music-toggle-container');
     
+    // Speed control DOM elements
+    const rabbitSpeedIcon = document.getElementById('rabbit-speed');
+    const tortoiseSpeedIcon = document.getElementById('tortoise-speed');
+    
     // State Variables
     let wordsList = [];
     let currentIndex = 0;
@@ -116,6 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Music State Variables
     let isPlayingMusic = false;
     let backgroundMusic = null;
+    
+    // Timer Alarm State Variables
+    let isAlarmActive = false;
+    let alarmAudio = null;
+    let alarmInterval = null;
     
     // Tutorial popup functions
     function showTutorial() {
@@ -555,25 +564,12 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(timerInterval);
             timerRunning = false;
             
-            // Stop clock rotation animation and start completion animation
-            const clockFace = meditationTimerIcon.querySelector('.clock-face');
-            clockFace.classList.remove('clock-rotating');
-            clockFace.classList.add('clock-complete');
+            // Start alarm animation and sound
+            startTimerAlarm();
             
             // Reset button states
             startTimerBtn.disabled = false;
             pauseTimerBtn.disabled = true;
-            
-            // Play notification sound or vibration if available
-            // This is a simple way to notify the user, but could be enhanced
-            if ('vibrate' in navigator) {
-                navigator.vibrate([200, 100, 200]);
-            }
-            
-            // Remove completion animation after 5 seconds
-            setTimeout(() => {
-                clockFace.classList.remove('clock-complete');
-            }, 5000);
         }
     }
     
@@ -611,6 +607,9 @@ document.addEventListener('DOMContentLoaded', function() {
         timerPaused = false;
         timeRemaining = 0;
         
+        // Stop any active alarm
+        stopTimerAlarm();
+        
         // Update display
         updateTimerDisplay();
         
@@ -624,6 +623,97 @@ document.addEventListener('DOMContentLoaded', function() {
         const clockFace = meditationTimerIcon.querySelector('.clock-face');
         clockFace.classList.remove('clock-rotating');
         clockFace.classList.remove('clock-complete');
+        clockFace.classList.remove('clock-alarm');
+    }
+    
+    // Timer Alarm Functions
+    function startTimerAlarm() {
+        isAlarmActive = true;
+        
+        // Start visual alarm animation
+        const clockFace = meditationTimerIcon.querySelector('.clock-face');
+        clockFace.classList.remove('clock-rotating');
+        clockFace.classList.add('clock-alarm');
+        
+        // Create and play alarm sound
+        createAlarmSound();
+        
+        // Add click listeners to stop alarm on interaction
+        addAlarmStopListeners();
+        
+        // Vibrate if available
+        if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 200, 100, 200]);
+        }
+    }
+    
+    function stopTimerAlarm() {
+        if (!isAlarmActive) return;
+        
+        isAlarmActive = false;
+        
+        // Stop visual animation
+        const clockFace = meditationTimerIcon.querySelector('.clock-face');
+        clockFace.classList.remove('clock-alarm');
+        
+        // Stop alarm sound
+        if (alarmAudio) {
+            alarmAudio.pause();
+            alarmAudio = null;
+        }
+        
+        // Clear alarm interval
+        if (alarmInterval) {
+            clearInterval(alarmInterval);
+            alarmInterval = null;
+        }
+    }
+    
+    function createAlarmSound() {
+        try {
+            // Create a simple alarm sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            alarmInterval = setInterval(() => {
+                if (!isAlarmActive) return;
+                
+                // Create oscillator for beep sound
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Set frequency for alarm sound (800Hz)
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                // Set volume
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                // Play beep for 300ms
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+                
+            }, 800); // Repeat every 800ms
+            
+        } catch (error) {
+            console.log('Web Audio API not supported, alarm will be visual only');
+        }
+    }
+    
+    function addAlarmStopListeners() {
+        // Stop alarm when user clicks anywhere on the timer area
+        const stopAlarmHandler = () => {
+            if (isAlarmActive) {
+                stopTimerAlarm();
+            }
+        };
+        
+        timerClickOverlay.addEventListener('click', stopAlarmHandler);
+        startTimerBtn.addEventListener('click', stopAlarmHandler);
+        resetTimerBtn.addEventListener('click', stopAlarmHandler);
     }
     
     // Lines read tracking functions
@@ -836,4 +926,35 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize music toggle
     initMusicToggle();
+    
+    // Initialize speed controls
+    initSpeedControls();
+    
+    // Speed control functions
+    function initSpeedControls() {
+        // Add click event listeners
+        rabbitSpeedIcon.addEventListener('click', function() {
+            setSpeedMode('normal');
+        });
+        
+        tortoiseSpeedIcon.addEventListener('click', function() {
+            setSpeedMode('slow');
+        });
+    }
+    
+    function setSpeedMode(mode) {
+        // Remove active class from both icons
+        rabbitSpeedIcon.classList.remove('active');
+        tortoiseSpeedIcon.classList.remove('active');
+        
+        if (mode === 'normal') {
+            // Set normal speed (slightly slower than original)
+            rabbitSpeedIcon.classList.add('active');
+            setScrollSpeed(0.85); // 85% of original speed
+        } else if (mode === 'slow') {
+            // Set slow speed
+            tortoiseSpeedIcon.classList.add('active');
+            setScrollSpeed(0.65); // 65% of normal speed
+        }
+    }
 });
